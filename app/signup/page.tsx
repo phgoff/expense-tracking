@@ -49,6 +49,7 @@ export default async function Page() {
                   id="password"
                   name="password"
                   type="password"
+                  min={6}
                   placeholder="password"
                   required
                 />
