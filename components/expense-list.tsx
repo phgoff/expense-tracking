@@ -18,6 +18,10 @@ export const ExpenseList = ({ listId, data }: ExpenseListProps) => {
   const [selectedData, setSelectedData] =
     React.useState<UpdateExpenseDataType | null>(null);
 
+  if (data.data.length === 0) {
+    return <p className="mt-4 text-center text-gray-400">ไม่มีข้อมูล</p>;
+  }
+
   return (
     <>
       {data.data.map((data) => (

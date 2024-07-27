@@ -30,18 +30,16 @@ export default async function Layout({
             <SubmitButton variant="link">ออกจากระบบ</SubmitButton>
           </FormAction>
         </div>
-        <div className="overflow-auto">
-          <div className="mb-4 space-y-2 text-center">
-            <p className="text-sm font-light">
-              คงเหลือ ณ วันที่{" "}
-              <span className="font-normal text-blue-600">
-                {new Date().toISOString().split("T")[0]}
-              </span>
-            </p>
-            <h2 className="text-4xl font-bold">{formatNumber(balance)}</h2>
-          </div>
-          {children}
+        <div className="mb-4 space-y-2 text-center">
+          <p className="text-sm font-light">
+            คงเหลือ ณ วันที่{" "}
+            <span className="font-normal text-blue-600">
+              {new Date().toISOString().split("T")[0]}
+            </span>
+          </p>
+          <h2 className="text-4xl font-bold">{formatNumber(balance)}</h2>
         </div>
+        <div className="overflow-auto">{children}</div>
       </div>
     </div>
   );
