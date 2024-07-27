@@ -10,6 +10,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export default async function Page({ params }: { params: { slug: string } }) {
   const { user } = await validateRequest();
   if (!user) {
@@ -31,7 +32,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
   return (
     <div className="flex h-full flex-col gap-4">
       <HydrationBoundary state={dehydrate(queryClient)}>
-        {list && <ExpenseList list={list} />}
+        {!list ? (
+          <p className="mt-4 text-center text-gray-400">ไม่มีข้อมูล</p>
+        ) : (
+          <ExpenseList list={list} />
+        )}
       </HydrationBoundary>
     </div>
   );
