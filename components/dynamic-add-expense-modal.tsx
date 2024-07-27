@@ -15,6 +15,7 @@ import { DialogHeader, DialogFooter } from "./ui/dialog";
 import { addExpenesAction } from "@/app/actions";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Spinner from "./spinner";
 
 const initialInputs = [{ id: Date.now(), item: "", amount: "" }];
 export const DynamicAddExpenseModal = ({
@@ -93,7 +94,8 @@ export const DynamicAddExpenseModal = ({
           amount: type === "income" ? amount : -amount,
         };
       });
-      mutation.mutate(data);
+
+      await mutation.mutateAsync(data);
     } catch (error) {
       console.error(error);
       toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
@@ -179,7 +181,10 @@ export const DynamicAddExpenseModal = ({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">ยืนยัน</Button>
+            <Button type="submit">
+              {mutation.isPending && <Spinner />}
+              ยืนยัน
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
