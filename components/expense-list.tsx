@@ -92,7 +92,7 @@ export function ExpenseList({ list }: { list: ListType }) {
         <DynamicAddExpenseModal type="income" listId={list.id} />
         <DynamicAddExpenseModal type="expense" listId={list.id} />
       </div>
-      <p>{list.name}</p>
+      <p className="text-lg font-bold">{list.name}</p>
       {query.isLoading ? (
         <Spinner className="w-full" />
       ) : (

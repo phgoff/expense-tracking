@@ -30,15 +30,15 @@ export const ExpenseItemsList = ({ listId, data }: ExpenseListProps) => {
           className="border-t pt-4 first:border-t-0 first:pt-0"
         >
           <div className="mb-2 flex justify-between">
-            <p className="font-prompt font-semibold">{`${new Date(
+            <p className="font-prompt font-medium">{`${new Date(
               data.date,
             ).toLocaleDateString("th-TH", {
               year: "numeric",
               month: "long",
               day: "numeric",
             })}`}</p>
-            <p className="text-sm font-semibold">
-              THB {formatNumber(data.total)}
+            <p className="text-sm font-medium">
+              {formatNumber(data.total)} บาท
             </p>
           </div>
           <div className="space-y-2">
