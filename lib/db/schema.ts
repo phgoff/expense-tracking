@@ -84,3 +84,4 @@ export const expensesRelations = relations(expenses, ({ one }) => ({
 
 export type Expense = typeof expenses.$inferSelect;
 export type ExpenseInsert = typeof expenses.$inferInsert;
+export type ListType = typeof lists.$inferSelect;

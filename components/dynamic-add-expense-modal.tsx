@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { DialogHeader, DialogFooter } from "./ui/dialog";
 import { addExpenesAction } from "@/app/actions";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const initialInputs = [{ id: Date.now(), item: "", amount: "" }];
 export const DynamicAddExpenseModal = ({
@@ -23,6 +24,7 @@ export const DynamicAddExpenseModal = ({
   type: string;
   listId: string;
 }) => {
+  const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
   const [inputs, setInputs] = React.useState(initialInputs);
   const containerRef = React.useRef<null | HTMLDivElement>(null);
@@ -71,6 +73,13 @@ export const DynamicAddExpenseModal = ({
     setInputs(updatedInputs);
   };
 
+  const mutation = useMutation({
+    mutationFn: addExpenesAction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses", listId] });
+    },
+  });
+
   const onSummit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -84,7 +93,7 @@ export const DynamicAddExpenseModal = ({
           amount: type === "income" ? amount : -amount,
         };
       });
-      await addExpenesAction(data);
+      mutation.mutate(data);
     } catch (error) {
       console.error(error);
       toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");

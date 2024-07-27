@@ -17,6 +17,12 @@ export async function getUserLists(userId: string) {
     .where(eq(lists.userId, userId));
 }
 
+export async function getList(listId: string) {
+  return db.query.lists.findFirst({
+    where: eq(lists.id, listId),
+  });
+}
+
 export async function getExpenses(listId: string, date = "2024-07") {
   const startOfMonth = dayjs(date).startOf("month").format("YYYY-MM-DD");
   const endOfMonth = dayjs(date).endOf("month").format("YYYY-MM-DD");

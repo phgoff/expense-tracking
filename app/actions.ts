@@ -6,30 +6,37 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Scrypt, generateId } from "lucia";
 import { revalidatePath } from "next/cache";
-import { addExpenses, updateExpense } from "@/lib/db/query";
+import { addExpenses, getExpenses, updateExpense } from "@/lib/db/query";
 import { lists, users, type ExpenseInsert } from "@/lib/db/schema";
 import type { ActionResult } from "@/components/form-action";
 
-const expensesPath = "/expenses";
+const expensesPath = "/expenses/lists";
 
 export const addExpenesAction = async (data: ExpenseInsert[]) => {
   await addExpenses(data);
 
-  revalidatePath(expensesPath);
+  revalidatePath(`${expensesPath}/${data[0].listId}`);
 
   return true;
 };
 
-export const updateExpenseAction = async (
-  id: number,
-  data: Partial<ExpenseInsert>,
-  diffAmount: number,
-) => {
+export const updateExpenseAction = async ({
+  id,
+  data,
+  diffAmount,
+}: {
+  id: number;
+  data: Partial<ExpenseInsert>;
+  diffAmount: number;
+}) => {
   await updateExpense(id, data, diffAmount);
 
-  revalidatePath(expensesPath);
+  revalidatePath(`${expensesPath}/${data.listId}`);
 
   return true;
+};
+export const getExpensesByListId = async (listId: string, month: string) => {
+  return getExpenses(listId, month);
 };
 
 export const signup = async (
