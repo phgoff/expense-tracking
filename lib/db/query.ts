@@ -7,7 +7,6 @@ const lists = schema.lists;
 const expenses = schema.expenses;
 
 export async function getUserLists(userId: string) {
-  console.log("fetching user lists");
   return db
     .select({
       id: lists.id,

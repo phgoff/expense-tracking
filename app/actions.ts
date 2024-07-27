@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { Scrypt, generateId } from "lucia";
 import { revalidatePath } from "next/cache";
 import { addExpenses, updateExpense } from "@/lib/db/query";
-import { users, type ExpenseInsert } from "@/lib/db/schema";
+import { lists, users, type ExpenseInsert } from "@/lib/db/schema";
 import type { ActionResult } from "@/components/form-action";
 
 const expensesPath = "/expenses";
@@ -64,6 +64,13 @@ export const signup = async (
       name: email.split("@")[0],
       email,
       password: hashedPassword,
+    });
+
+    await db.insert(lists).values({
+      id: generateId(15),
+      userId,
+      name: "Default",
+      balance: 0,
     });
 
     const session = await lucia.createSession(userId, {});
