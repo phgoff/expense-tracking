@@ -6,11 +6,11 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Scrypt, generateId } from "lucia";
 import { revalidatePath } from "next/cache";
-import { addExpenses, updateExpense } from "@/lib/db/query";
+import { addExpenses, getExpenses, updateExpense } from "@/lib/db/query";
 import { lists, users, type ExpenseInsert } from "@/lib/db/schema";
 import type { ActionResult } from "@/components/form-action";
 
-const expensesPath = "/expenses";
+const expensesPath = "/expenses/lists";
 
 export const addExpenesAction = async (data: ExpenseInsert[]) => {
   await addExpenses(data);
@@ -30,6 +30,10 @@ export const updateExpenseAction = async (
   revalidatePath(expensesPath);
 
   return true;
+};
+
+export const getExpensesByListId = async (listId: string, month: string) => {
+  return getExpenses(listId, month);
 };
 
 export const signup = async (

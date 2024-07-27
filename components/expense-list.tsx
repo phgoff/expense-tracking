@@ -1,71 +1,107 @@
 "use client";
 
-import * as React from "react";
+import dayjs from "dayjs";
 import { formatNumber } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ExpenseItemsList } from "@/components/expense-items-list";
+import { DynamicAddExpenseModal } from "@/components/dynamic-add-expense-modal";
 import {
-  UpdateExpenseModal,
-  type UpdateExpenseDataType,
-} from "./update-expense-modal";
-import type { ExpenseListType } from "@/lib/db/query";
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsRightIcon,
+} from "lucide-react";
+import type { ListType } from "@/lib/db/schema";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
+import { getExpensesByListId } from "@/app/actions";
+import Spinner from "./spinner";
 
-interface ExpenseListProps {
-  listId: string;
-  data: ExpenseListType;
-}
+export function ExpenseList({ list }: { list: ListType }) {
+  const now = dayjs();
+  const [month, setMonth] = React.useState(now.format("YYYY-MM"));
 
-export const ExpenseList = ({ listId, data }: ExpenseListProps) => {
-  const [open, setOpen] = React.useState(false);
-  const [selectedData, setSelectedData] =
-    React.useState<UpdateExpenseDataType | null>(null);
+  const [months, setMonths] = React.useState({
+    prev: dayjs(month).subtract(1, "month").format("YYYY-MM"),
+    next: dayjs(month).add(1, "month").format("YYYY-MM"),
+  });
 
-  if (data.data.length === 0) {
-    return <p className="mt-4 text-center text-gray-400">ไม่มีข้อมูล</p>;
-  }
+  const query = useQuery({
+    queryKey: ["expenses", list.id, month],
+    queryFn: () => getExpensesByListId(list.id, month),
+  });
+
+  React.useEffect(() => {
+    setMonths({
+      prev: dayjs(month).subtract(1, "month").format("YYYY-MM"),
+      next: dayjs(month).add(1, "month").format("YYYY-MM"),
+    });
+  }, [month]);
+
+  const onPrevMonthClick = () => setMonth(months.prev);
+
+  const onNextMonthClick = () => setMonth(months.next);
+
+  const onMoreThanOneMonthClick = () => setMonth(now.format("YYYY-MM"));
+
+  const disableNextMonth = dayjs(months.next).isAfter(now.format("YYYY-MM"));
+  const isMoreThanOneMonth = dayjs(month).isBefore(now.subtract(1, "month"));
 
   return (
-    <>
-      {data.data.map((data) => (
-        <div key={data.date} className="border-t pt-4 first:border-t-0">
-          <div className="mb-2 flex justify-between">
-            <p className="font-prompt font-semibold">{`${new Date(
-              data.date,
-            ).toLocaleDateString("th-TH", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}`}</p>
-            <p className="text-sm font-semibold">
-              THB {formatNumber(data.total)}
-            </p>
-          </div>
-          <div className="space-y-2">
-            {data.items.map(({ id, name, amount }) => (
-              <div className="flex justify-between" key={id}>
-                <p className="text-sm">{name}</p>
-                <button
-                  type="button"
-                  className={`text-sm ${
-                    amount > 0 ? "text-green-500" : "text-red-500"
-                  }`}
-                  onClick={() => {
-                    setOpen(!open);
-                    setSelectedData({
-                      date: data.date,
-                      listId,
-                      id,
-                      name,
-                      amount,
-                    });
-                  }}
-                >
-                  {formatNumber(amount)}
-                </button>
-              </div>
-            ))}
-          </div>
+    <div className="flex h-full flex-col gap-4">
+      <div className="flex items-center justify-center space-x-2 font-prompt font-light">
+        <Button
+          variant="outline"
+          size="icon"
+          className="flex h-6 w-6"
+          onClick={onPrevMonthClick}
+        >
+          <ChevronLeftIcon className="h-4 w-4" />
+        </Button>
+        <p className="text-sm">
+          ยอดเดือน{" "}
+          {new Date(month).toLocaleDateString("th-TH", {
+            year: "numeric",
+            month: "long",
+          })}
+        </p>
+        <p className="text-sm">
+          {formatNumber(query.data?.monthTotal ?? 0)} บาท
+        </p>
+
+        <Button
+          variant="outline"
+          size="icon"
+          className="flex h-6 w-6"
+          onClick={onNextMonthClick}
+          disabled={disableNextMonth}
+        >
+          <ChevronRightIcon className="h-4 w-4" />
+        </Button>
+        {isMoreThanOneMonth && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="flex h-6 w-6"
+            onClick={onMoreThanOneMonthClick}
+          >
+            <ChevronsRightIcon className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+      <div className="flex justify-around">
+        <DynamicAddExpenseModal type="income" listId={list.id} />
+        <DynamicAddExpenseModal type="expense" listId={list.id} />
+      </div>
+      <p>{list.name}</p>
+      {query.isLoading ? (
+        <Spinner className="w-full" />
+      ) : (
+        <div className="flex-1 space-y-4 overflow-y-scroll">
+          {query.data && (
+            <ExpenseItemsList listId={list.id} data={query.data} />
+          )}
         </div>
-      ))}
-      <UpdateExpenseModal open={open} setOpen={setOpen} data={selectedData} />
-    </>
+      )}
+    </div>
   );
-};
+}

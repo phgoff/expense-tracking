@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Inter as FontSans, Kanit as Prompt } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import Providers from "./providers";
 
 import { cn } from "@/lib/utils";
 
@@ -43,7 +44,9 @@ export default function RootLayout({
           fontPrompt.variable,
         )}
       >
-        <main>{children}</main>
+        <Providers>
+          <main>{children}</main>
+        </Providers>
         <Toaster richColors />
       </body>
     </html>

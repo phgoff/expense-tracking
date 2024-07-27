@@ -15,7 +15,7 @@ const db = drizzle(client, {
 export const adatper = new DrizzleSQLiteAdapter(
   db,
   schema.session,
-  schema.users
+  schema.users,
 );
 
 export default db;
