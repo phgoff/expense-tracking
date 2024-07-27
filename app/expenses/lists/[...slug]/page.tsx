@@ -10,7 +10,6 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export default async function Page({ params }: { params: { slug: string } }) {
   const { user } = await validateRequest();
   if (!user) {

@@ -21,6 +21,7 @@ import {
 import { updateExpenseAction } from "@/app/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import Spinner from "./spinner";
 
 export interface UpdateExpenseDataType {
   listId: string;
@@ -93,7 +94,7 @@ export const UpdateExpenseModal = ({
         amount: newAmount,
       };
 
-      mutation.mutate({ id, data: newdata, diffAmount });
+      await mutation.mutateAsync({ id, data: newdata, diffAmount });
 
       setOpen(false);
     } catch (error) {
@@ -158,7 +159,10 @@ export const UpdateExpenseModal = ({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">ยืนยัน</Button>
+            <Button type="submit">
+              {mutation.isPending && <Spinner />}
+              ยืนยัน
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
