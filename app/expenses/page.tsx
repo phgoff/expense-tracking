@@ -3,11 +3,7 @@ import { validateRequest } from "@/lib/auth";
 import { getUserLists } from "@/lib/db/query";
 import Link from "next/link";
 
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function Page() {
   const { user } = await validateRequest();
   if (!user) {
     return redirect("/login");
