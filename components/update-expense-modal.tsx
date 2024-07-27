@@ -19,6 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { updateExpenseAction } from "@/app/actions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
 
 export interface UpdateExpenseDataType {
   listId: string;
@@ -50,6 +52,20 @@ export const UpdateExpenseModal = ({
 }) => {
   const defaultType = data?.amount && data.amount > 0 ? "income" : "expense";
   const [selectedType, setSelectedType] = React.useState(defaultType);
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: updateExpenseAction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "expenses",
+          data?.listId,
+          dayjs(data?.date).format("YYYY-MM"),
+        ],
+      });
+    },
+  });
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -77,7 +93,7 @@ export const UpdateExpenseModal = ({
         amount: newAmount,
       };
 
-      await updateExpenseAction(id, newdata, diffAmount);
+      mutation.mutate({ id, data: newdata, diffAmount });
 
       setOpen(false);
     } catch (error) {
