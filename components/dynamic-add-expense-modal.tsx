@@ -125,7 +125,7 @@ export const DynamicAddExpenseModal = ({
               />
             </div>
             <div
-              className="max-h-[290px] space-y-4 overflow-y-auto"
+              className="max-h-[290px] space-y-4 overflow-y-auto pb-2"
               ref={containerRef}
             >
               {inputs.map((input, index) => (

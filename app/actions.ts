@@ -1,17 +1,35 @@
 "use server";
 
 import db from "@/lib/db";
-import { lucia } from "@/lib/auth";
+import { lucia, validateRequest } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Scrypt, generateId } from "lucia";
+import { Scrypt, generateIdFromEntropySize } from "lucia";
 import { revalidatePath } from "next/cache";
-import { addExpenses, getExpenses, updateExpense } from "@/lib/db/query";
-import { lists, users, type ExpenseInsert } from "@/lib/db/schema";
+import {
+  addExpenses,
+  addList,
+  getExpenses,
+  updateExpense,
+} from "@/lib/db/query";
+import { ListInsert, lists, users, type ExpenseInsert } from "@/lib/db/schema";
 import type { ActionResult } from "@/components/form-action";
 
 const expensesPath = "/expenses/lists";
 
+export const adddListAction = async ({
+  name,
+  userId,
+}: {
+  name: string;
+  userId: string;
+}) => {
+  await addList(name, userId);
+
+  revalidatePath("/expenses");
+
+  return true;
+};
 export const addExpenesAction = async (data: ExpenseInsert[]) => {
   await addExpenses(data);
 
@@ -35,7 +53,10 @@ export const updateExpenseAction = async ({
 
   return true;
 };
-export const getExpensesByListId = async (listId: string, month: string) => {
+export const getExpensesByListAction = async (
+  listId: string,
+  month: string,
+) => {
   return getExpenses(listId, month);
 };
 
@@ -64,20 +85,13 @@ export const signup = async (
     }
 
     const hashedPassword = await new Scrypt().hash(password);
-    const userId = generateId(15);
+    const userId = generateIdFromEntropySize(10);
 
     await db.insert(users).values({
       id: userId,
       name: email.split("@")[0],
       email,
       password: hashedPassword,
-    });
-
-    await db.insert(lists).values({
-      id: generateId(15),
-      userId,
-      name: "Default",
-      balance: 0,
     });
 
     const session = await lucia.createSession(userId, {});

@@ -8,23 +8,23 @@ import {
 } from "./update-expense-modal";
 import type { ExpenseListType } from "@/lib/db/query";
 
-interface ExpenseListProps {
-  listId: string;
-  data: ExpenseListType;
-}
-
-export const ExpenseItemsList = ({ listId, data }: ExpenseListProps) => {
+export const ExpenseItemsList = ({
+  data,
+}: {
+  data: ExpenseListType | undefined;
+}) => {
   const [open, setOpen] = React.useState(false);
   const [selectedData, setSelectedData] =
     React.useState<UpdateExpenseDataType | null>(null);
+  const listId = data?.list.id;
 
-  if (data.data.length === 0) {
+  if (data?.data.length === 0 || !listId) {
     return <p className="mt-4 text-center text-gray-400">ไม่มีข้อมูล</p>;
   }
 
   return (
     <>
-      {data.data.map((data) => (
+      {data?.data.map((data) => (
         <div
           key={data.date}
           className="border-t pt-4 first:border-t-0 first:pt-0"

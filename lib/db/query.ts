@@ -12,9 +12,11 @@ export async function getUserLists(userId: string) {
       id: lists.id,
       name: lists.name,
       balance: lists.balance,
+      updatedAt: lists.updatedAt,
     })
     .from(lists)
-    .where(eq(lists.userId, userId));
+    .where(eq(lists.userId, userId))
+    .orderBy(desc(lists.updatedAt));
 }
 
 export async function getList(listId: string) {
@@ -23,9 +25,11 @@ export async function getList(listId: string) {
   });
 }
 
-export async function getExpenses(listId: string, date = "2024-07") {
-  const startOfMonth = dayjs(date).startOf("month").format("YYYY-MM-DD");
-  const endOfMonth = dayjs(date).endOf("month").format("YYYY-MM-DD");
+export async function getExpenses(listId: string, month = "2024-07") {
+  const startOfMonth = dayjs(month).startOf("month").format("YYYY-MM-DD");
+  const endOfMonth = dayjs(month).endOf("month").format("YYYY-MM-DD");
+
+  const list = await getList(listId);
 
   const result = await db
     .select({
@@ -68,6 +72,7 @@ export async function getExpenses(listId: string, date = "2024-07") {
   return {
     data,
     monthTotal,
+    list: list!,
   };
 }
 
@@ -75,7 +80,8 @@ export type ExpenseListType = Awaited<ReturnType<typeof getExpenses>>;
 
 export async function addExpenses(data: schema.ExpenseInsert[]) {
   await db.insert(expenses).values(data);
-  await updateBalance(data[0].listId, data[0].amount);
+  const total = data.reduce((sum, { amount }) => sum + amount, 0);
+  await updateBalance(data[0].listId, total);
   return true;
 }
 
@@ -102,6 +108,15 @@ export async function updateBalance(listId: string, amount: number) {
       balance: sql`${lists.balance} + ${amount}`,
     })
     .where(eq(lists.id, listId));
+
+  return true;
+}
+
+export async function addList(name: string, userId: string) {
+  await db.insert(lists).values({
+    name,
+    userId,
+  });
 
   return true;
 }

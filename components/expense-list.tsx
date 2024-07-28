@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import dayjs from "dayjs";
 import { formatNumber } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,9 +13,7 @@ import {
 } from "lucide-react";
 import type { ListType } from "@/lib/db/schema";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { getExpensesByListId } from "@/app/actions";
-import Spinner from "./spinner";
+import { getExpensesByListAction } from "@/app/actions";
 
 export function ExpenseList({ list }: { list: ListType }) {
   const now = dayjs();
@@ -25,9 +24,9 @@ export function ExpenseList({ list }: { list: ListType }) {
     next: dayjs(month).add(1, "month").format("YYYY-MM"),
   });
 
-  const query = useQuery({
+  const { data } = useQuery({
     queryKey: ["expenses", list.id, month],
-    queryFn: () => getExpensesByListId(list.id, month),
+    queryFn: () => getExpensesByListAction(list.id, month),
   });
 
   React.useEffect(() => {
@@ -48,7 +47,7 @@ export function ExpenseList({ list }: { list: ListType }) {
 
   return (
     <div className="flex h-full flex-col gap-4">
-      <div className="flex items-center justify-center space-x-2 font-prompt font-light">
+      <div className="flex items-center justify-center space-x-2 pt-1 font-prompt font-light">
         <Button
           variant="outline"
           size="icon"
@@ -64,10 +63,7 @@ export function ExpenseList({ list }: { list: ListType }) {
             month: "long",
           })}
         </p>
-        <p className="text-sm">
-          {formatNumber(query.data?.monthTotal ?? 0)} บาท
-        </p>
-
+        <p className="text-sm">{formatNumber(data?.monthTotal ?? 0)} บาท</p>
         <Button
           variant="outline"
           size="icon"
@@ -93,15 +89,7 @@ export function ExpenseList({ list }: { list: ListType }) {
         <DynamicAddExpenseModal type="expense" listId={list.id} />
       </div>
       <p className="text-lg font-bold">{list.name}</p>
-      {query.isLoading ? (
-        <Spinner className="w-full" />
-      ) : (
-        <div className="flex-1 space-y-4 overflow-y-scroll">
-          {query.data && (
-            <ExpenseItemsList listId={list.id} data={query.data} />
-          )}
-        </div>
-      )}
+      <ExpenseItemsList data={data} />
     </div>
   );
 }
