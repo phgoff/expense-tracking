@@ -89,7 +89,9 @@ export function ExpenseList({ list }: { list: ListType }) {
         <DynamicAddExpenseModal type="expense" listId={list.id} />
       </div>
       <p className="text-lg font-bold">{list.name}</p>
-      <ExpenseItemsList data={data} />
+      <div className="flex-1 overflow-auto">
+        <ExpenseItemsList data={data} />
+      </div>
     </div>
   );
 }
