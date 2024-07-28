@@ -3,8 +3,8 @@ import { validateRequest } from "@/lib/auth";
 import { getUserLists } from "@/lib/db/query";
 import Link from "next/link";
 import { AddListModal } from "@/components/add-list-modal";
-import dayjs from "dayjs";
 import { formatNumber } from "@/lib/utils";
+import { formatDate } from "@/lib/dayjs";
 
 export default async function Page() {
   const { user } = await validateRequest();
@@ -37,7 +37,7 @@ export default async function Page() {
                     {formatNumber(list.balance)}
                   </p>
                   <p className="text-xs font-light text-gray-500">
-                    {dayjs(list.updatedAt).format("DD/MM/YYYY HH:mm:ss")}{" "}
+                    {formatDate(list.updatedAt, "DD/MM/YYYY HH:mm:ss")}
                   </p>
                 </div>
               </Link>
