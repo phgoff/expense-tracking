@@ -18,7 +18,7 @@ export default async function Layout({
 
   return (
     <div className="flex h-screen flex-col items-center p-4">
-      <div className="flex h-full w-full max-w-md flex-col gap-4 rounded-lg p-6 shadow-md">
+      <div className="flex h-full w-full max-w-md flex-col gap-2 rounded-lg p-6 shadow-md">
         <div className="flex items-center">
           <div className="flex-1">
             <Link href="/expenses">

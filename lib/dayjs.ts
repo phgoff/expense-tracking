@@ -7,7 +7,7 @@ dayjs.extend(timezone);
 
 export const formatLocal = (
   date: Date | string | null,
-  format = "DD/MM/YYYY"
+  format = "DD/MM/YYYY",
 ) => {
   const d = !date ? dayjs() : dayjs(date);
   return dayjs(d).tz("Asia/Bangkok").format(format);

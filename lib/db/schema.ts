@@ -6,15 +6,19 @@ import {
   real,
   sqliteTable,
 } from "drizzle-orm/sqlite-core";
+import { generateIdFromEntropySize } from "lucia";
 
 export const users = sqliteTable("users", {
-  id: text("id").notNull().primaryKey(),
+  id: text("id")
+    .notNull()
+    .$defaultFn(() => generateIdFromEntropySize(10))
+    .primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull(),
   password: text("password").notNull(),
-  createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
   updatedAt: text("updated_at")
-    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$defaultFn(() => new Date().toISOString())
     .$onUpdate(() => new Date().toISOString()),
 });
 
@@ -27,15 +31,18 @@ export const session = sqliteTable("session", {
 });
 
 export const lists = sqliteTable("lists", {
-  id: text("id").notNull().primaryKey(),
+  id: text("id")
+    .notNull()
+    .$defaultFn(() => generateIdFromEntropySize(10))
+    .primaryKey(),
   name: text("name").notNull(),
   balance: real("balance").default(0).notNull(),
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
   updatedAt: text("updated_at")
-    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$defaultFn(() => new Date().toISOString())
     .$onUpdate(() => new Date().toISOString()),
 });
 
@@ -51,7 +58,7 @@ export const expenses = sqliteTable(
     listId: text("list_id")
       .notNull()
       .references(() => lists.id),
-    timestamp: text("timestamp").default(sql`(CURRENT_TIMESTAMP)`),
+    timestamp: text("timestamp").$defaultFn(() => new Date().toISOString()),
   },
   (t) => {
     return {
@@ -85,3 +92,4 @@ export const expensesRelations = relations(expenses, ({ one }) => ({
 export type Expense = typeof expenses.$inferSelect;
 export type ExpenseInsert = typeof expenses.$inferInsert;
 export type ListType = typeof lists.$inferSelect;
+export type ListInsert = typeof lists.$inferInsert;

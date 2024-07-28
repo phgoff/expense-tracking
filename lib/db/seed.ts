@@ -1,21 +1,21 @@
 import db from ".";
 
 import * as schema from "./schema";
-import { generateId, Scrypt } from "lucia";
+import { generateIdFromEntropySize, Scrypt } from "lucia";
 
 const name = ["ค่าน้ำ", "ค่าไฟ", "ค่าอาหาร", "ค่าเดินทาง"];
 
 export async function seed() {
   const password = await new Scrypt().hash("password");
   const userData = Array.from({ length: 1 }, (_, i) => ({
-    id: generateId(15),
+    id: generateIdFromEntropySize(10),
     name: `user${i + 1}`,
     email: `user${i + 1}@email.com`,
     password,
   }));
 
   const listData = Array.from({ length: 1 }, (_, i) => ({
-    id: generateId(15),
+    id: generateIdFromEntropySize(10),
     name: `list${i + 1}`,
     userId: userData[Math.floor(Math.random() * userData.length)].id,
     balance: Math.floor(Math.random() * 1000) / 100,
