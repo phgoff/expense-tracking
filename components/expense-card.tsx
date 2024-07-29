@@ -13,8 +13,9 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getExpensesByListAction } from "@/app/actions";
+import type { ListType } from "@/lib/db/schema";
 
-export function ExpenseCard({ listId }: { listId: string }) {
+export function ExpenseCard({ list }: { list: ListType }) {
   const now = dayjs();
   const [month, setMonth] = React.useState(now.format("YYYY-MM"));
 
@@ -24,8 +25,8 @@ export function ExpenseCard({ listId }: { listId: string }) {
   });
 
   const { data } = useQuery({
-    queryKey: ["expenses", listId, month],
-    queryFn: () => getExpensesByListAction(listId, month),
+    queryKey: ["expenses", list.id, month],
+    queryFn: () => getExpensesByListAction(list.id, month),
   });
 
   React.useEffect(() => {
@@ -85,10 +86,10 @@ export function ExpenseCard({ listId }: { listId: string }) {
           )}
         </div>
         <div className="flex justify-around">
-          <DynamicAddExpenseModal type="income" listId={listId} />
-          <DynamicAddExpenseModal type="expense" listId={listId} />
+          <DynamicAddExpenseModal type="income" listId={list.id} />
+          <DynamicAddExpenseModal type="expense" listId={list.id} />
         </div>
-        <p className="text-lg font-bold">{data?.list.name}</p>
+        <p className="text-lg font-bold">{list.name}</p>
         <div className="flex-1 overflow-auto">
           <ExpenseCardItems data={data} />
         </div>
