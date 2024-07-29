@@ -181,7 +181,7 @@ export const DynamicAddExpenseModal = ({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">
+            <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending && <Spinner />}
               ยืนยัน
             </Button>
