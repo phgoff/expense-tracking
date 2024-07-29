@@ -39,7 +39,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
             {dayjs().format("DD/MM/YYYY")}
           </span>
         </p>
-        <h2 className="text-4xl font-bold">{formatNumber(list?.balance!)}</h2>
+        <h2 className="text-4xl font-bold">
+          {formatNumber(list?.balance ?? 0)}
+        </h2>
       </div>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <div className="overflow-auto">
