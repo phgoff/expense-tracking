@@ -21,6 +21,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const listId = params.slug;
   const list = await getList(listId);
 
+  if (!list) {
+    return redirect("/expenses/lists");
+  }
+
   const month = dayjs().format("YYYY-MM");
 
   const queryClient = new QueryClient();
@@ -40,11 +44,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </span>
         </p>
         <h1 className="text-4xl font-bold">
-          {formatNumber(list?.balance ?? 0)}
+          {formatNumber(list.balance ?? 0)}
         </h1>
       </div>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <ExpenseCard listId={listId} />
+        <ExpenseCard list={list} />
       </HydrationBoundary>
     </>
   );
