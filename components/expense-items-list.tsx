@@ -27,7 +27,7 @@ export const ExpenseItemsList = ({
       {data?.data.map((data) => (
         <div
           key={data.date}
-          className="border-t pt-4 first:border-t-0 first:pt-0"
+          className="border-t py-4 first:border-t-0 first:pt-0"
         >
           <div className="mb-2 flex justify-between">
             <p className="font-prompt font-medium">{`${new Date(

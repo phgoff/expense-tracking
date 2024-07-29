@@ -78,29 +78,26 @@ export const DynamicAddExpenseModal = ({
     mutationFn: addExpenesAction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses", listId] });
+      setOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
     },
   });
 
   const onSummit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    try {
-      const data = inputs.map((input) => {
-        const amount = Number.parseFloat(input.amount);
-        return {
-          listId,
-          date: event.currentTarget.date.value,
-          name: input.item,
-          amount: type === "income" ? amount : -amount,
-        };
-      });
-
-      await mutation.mutateAsync(data);
-    } catch (error) {
-      console.error(error);
-      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
-    }
-    setOpen(false);
+    const data = inputs.map((input) => {
+      const amount = Number.parseFloat(input.amount);
+      return {
+        listId,
+        date: event.currentTarget.date.value,
+        name: input.item,
+        amount: type === "income" ? amount : -amount,
+      };
+    });
+    mutation.mutate(data);
   };
 
   return (

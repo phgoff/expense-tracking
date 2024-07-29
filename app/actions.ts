@@ -12,7 +12,7 @@ import {
   getExpenses,
   updateExpense,
 } from "@/lib/db/query";
-import { ListInsert, lists, users, type ExpenseInsert } from "@/lib/db/schema";
+import { users, type ExpenseInsert } from "@/lib/db/schema";
 import type { ActionResult } from "@/components/form-action";
 
 const expensesPath = "/expenses/lists";
@@ -30,6 +30,7 @@ export const adddListAction = async ({
 
   return true;
 };
+
 export const addExpenesAction = async (data: ExpenseInsert[]) => {
   await addExpenses(data);
 

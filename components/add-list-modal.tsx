@@ -15,19 +15,24 @@ import { DialogHeader, DialogFooter } from "./ui/dialog";
 import { adddListAction } from "@/app/actions";
 import { useMutation } from "@tanstack/react-query";
 import Spinner from "./spinner";
-
+import { toast } from "sonner";
 export const AddListModal = ({ userId }: { userId: string }) => {
   const mutation = useMutation({
     mutationFn: adddListAction,
+    onSuccess: () => {
+      setOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+    },
   });
+
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const name = form.item.value;
-
-    await mutation.mutateAsync({ userId, name });
-
-    setOpen(false);
+    mutation.mutate({ userId, name });
   };
 
   const [open, setOpen] = React.useState(false);
