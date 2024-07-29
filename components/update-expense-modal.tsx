@@ -58,19 +58,17 @@ export const UpdateExpenseModal = ({
 
   const mutation = useMutation({
     mutationFn: updateExpenseAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          "expenses",
-          data?.listId,
-          dayjs(data?.date).format("YYYY-MM"),
-        ],
+    onSuccess: async () => {
+      return await queryClient.invalidateQueries({
+        queryKey: ["expenses", data?.listId],
       });
-      setOpen(false);
     },
     onError: (error) => {
       console.error(error);
       toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+    },
+    onSettled: () => {
+      setOpen(false);
     },
   });
 

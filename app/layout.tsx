@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter as FontSans, Kanit as Prompt } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import Providers from "./providers";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { cn } from "@/lib/utils";
 
@@ -46,6 +47,7 @@ export default function RootLayout({
       >
         <Providers>
           <main>{children}</main>
+          <ReactQueryDevtools initialIsOpen={false} />
         </Providers>
         <Toaster richColors />
       </body>

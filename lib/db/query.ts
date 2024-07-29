@@ -6,6 +6,9 @@ import dayjs from "@/lib/dayjs";
 const lists = schema.lists;
 const expenses = schema.expenses;
 
+export type ExpenseListType = Awaited<ReturnType<typeof getExpenses>>;
+export type UserListType = Awaited<ReturnType<typeof getUserLists>>;
+
 export async function getUserLists(userId: string) {
   return db
     .select({
@@ -75,8 +78,6 @@ export async function getExpenses(listId: string, month = "2024-07") {
     list: list!,
   };
 }
-
-export type ExpenseListType = Awaited<ReturnType<typeof getExpenses>>;
 
 export async function addExpenses(data: schema.ExpenseInsert[]) {
   await db.insert(expenses).values(data);
