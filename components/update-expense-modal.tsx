@@ -22,6 +22,7 @@ import { updateExpenseAction } from "@/app/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import Spinner from "./spinner";
+import { toast } from "sonner";
 
 export interface UpdateExpenseDataType {
   listId: string;
@@ -65,6 +66,11 @@ export const UpdateExpenseModal = ({
           dayjs(data?.date).format("YYYY-MM"),
         ],
       });
+      setOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
     },
   });
 
@@ -81,27 +87,19 @@ export const UpdateExpenseModal = ({
     const name = form.item.value;
     const amount = Number.parseFloat(form.amount.value);
 
-    try {
-      const { newAmount, diffAmount } = calculateAmounts(
-        selectedType,
-        amount,
-        data.amount,
-      );
+    const { newAmount, diffAmount } = calculateAmounts(
+      selectedType,
+      amount,
+      data.amount,
+    );
 
-      const newdata = {
-        ...data,
-        name,
-        amount: newAmount,
-      };
+    const newdata = {
+      ...data,
+      name,
+      amount: newAmount,
+    };
 
-      await mutation.mutateAsync({ id, data: newdata, diffAmount });
-
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-    }
-
-    setOpen(false);
+    mutation.mutate({ id, data: newdata, diffAmount });
   };
 
   React.useEffect(() => {
