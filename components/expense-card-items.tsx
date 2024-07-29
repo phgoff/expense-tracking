@@ -8,7 +8,7 @@ import {
 } from "./update-expense-modal";
 import type { ExpenseListType } from "@/lib/db/query";
 
-export const ExpenseItemsList = ({
+export const ExpenseCardItems = ({
   data,
 }: {
   data: ExpenseListType | undefined;

@@ -10,12 +10,12 @@ const SubmitButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const { pending } = useFormStatus();
 
     return (
-      <Button ref={ref} {...props}>
+      <Button ref={ref} {...props} disabled={pending}>
         {pending && <Spinner />}
         {children}
       </Button>
     );
-  }
+  },
 );
 
 SubmitButton.displayName = "SubmitButton";

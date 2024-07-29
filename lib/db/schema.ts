@@ -40,8 +40,11 @@ export const lists = sqliteTable("lists", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  createdAt: text("created_at").$defaultFn(() => new Date().toISOString()),
+  createdAt: text("created_at")
+    .$defaultFn(() => new Date().toISOString())
+    .notNull(),
   updatedAt: text("updated_at")
+    .notNull()
     .$defaultFn(() => new Date().toISOString())
     .$onUpdate(() => new Date().toISOString()),
 });

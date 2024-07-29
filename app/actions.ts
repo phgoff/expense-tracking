@@ -1,7 +1,7 @@
 "use server";
 
 import db from "@/lib/db";
-import { lucia, validateRequest } from "@/lib/auth";
+import { lucia } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Scrypt, generateIdFromEntropySize } from "lucia";
@@ -17,13 +17,8 @@ import type { ActionResult } from "@/components/form-action";
 
 const expensesPath = "/expenses/lists";
 
-export const adddListAction = async ({
-  name,
-  userId,
-}: {
-  name: string;
-  userId: string;
-}) => {
+export const adddListAction = async (userId: string, formData: FormData) => {
+  const name = formData.get("item") as string;
   await addList(name, userId);
 
   revalidatePath("/expenses");
@@ -49,7 +44,6 @@ export const updateExpenseAction = async ({
   diffAmount: number;
 }) => {
   await updateExpense(id, data, diffAmount);
-
   revalidatePath(`${expensesPath}/${data.listId}`);
 
   return true;

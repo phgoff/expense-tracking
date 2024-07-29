@@ -76,13 +76,17 @@ export const DynamicAddExpenseModal = ({
 
   const mutation = useMutation({
     mutationFn: addExpenesAction,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", listId] });
-      setOpen(false);
+    onSuccess: async () => {
+      return await queryClient.invalidateQueries({
+        queryKey: ["expenses", listId],
+      });
     },
     onError: (error) => {
       console.error(error);
       toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+    },
+    onSettled: () => {
+      setOpen(false);
     },
   });
 
