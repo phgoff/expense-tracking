@@ -12,7 +12,7 @@ import {
   getExpenses,
   updateExpense,
 } from "@/lib/db/query";
-import { ListInsert, lists, users, type ExpenseInsert } from "@/lib/db/schema";
+import { users, type ExpenseInsert } from "@/lib/db/schema";
 import type { ActionResult } from "@/components/form-action";
 
 const expensesPath = "/expenses/lists";
@@ -31,10 +31,7 @@ export const adddListAction = async ({
   return true;
 };
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export const addExpenesAction = async (data: ExpenseInsert[]) => {
-  // throw new Error("Not implemented");
-  // await wait(2000);
   await addExpenses(data);
 
   revalidatePath(`${expensesPath}/${data[0].listId}`);
