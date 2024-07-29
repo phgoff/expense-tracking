@@ -55,7 +55,7 @@ export const AddListModal = ({ userId }: { userId: string }) => {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">
+            <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? <Spinner /> : ""}
               ยืนยัน
             </Button>
