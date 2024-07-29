@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </span>
         </p>
         <h1 className="text-4xl font-bold">
-          {formatNumber(list?.balance ?? 0)}
+          {formatNumber(list.balance ?? 0)}
         </h1>
       </div>
       <HydrationBoundary state={dehydrate(queryClient)}>
