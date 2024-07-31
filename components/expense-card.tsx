@@ -14,6 +14,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { getExpensesByListAction } from "@/app/actions";
 import type { ListType } from "@/lib/db/schema";
+import Spinner from "./spinner";
 
 export function ExpenseCard({ list }: { list: ListType }) {
   const now = dayjs();
@@ -24,7 +25,7 @@ export function ExpenseCard({ list }: { list: ListType }) {
     next: dayjs(month).add(1, "month").format("YYYY-MM"),
   });
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["expenses", list.id, month],
     queryFn: () => getExpensesByListAction(list.id, month),
   });
@@ -50,6 +51,8 @@ export function ExpenseCard({ list }: { list: ListType }) {
       <div className="flex h-full flex-col gap-4">
         <div className="flex items-center justify-center space-x-2 pt-1 font-prompt font-light">
           <Button
+            id="prev-month"
+            aria-label="previous-month"
             variant="outline"
             size="icon"
             className="flex h-6 w-6"
@@ -66,6 +69,8 @@ export function ExpenseCard({ list }: { list: ListType }) {
           </p>
           <p className="text-sm">{formatNumber(data?.monthTotal ?? 0)} บาท</p>
           <Button
+            id="next-month"
+            aria-label="next-month"
             variant="outline"
             size="icon"
             className="flex h-6 w-6"
@@ -76,6 +81,8 @@ export function ExpenseCard({ list }: { list: ListType }) {
           </Button>
           {isMoreThanOneMonth && (
             <Button
+              id="more-than-one-month"
+              aria-label="more-than-one-month"
               variant="outline"
               size="icon"
               className="flex h-6 w-6"
@@ -91,7 +98,14 @@ export function ExpenseCard({ list }: { list: ListType }) {
         </div>
         <p className="text-lg font-bold">{list.name}</p>
         <div className="flex-1 overflow-auto">
-          <ExpenseCardItems data={data} />
+          {isLoading ? (
+            <div className="flex h-32 items-center justify-center text-gray-400">
+              <Spinner />
+              <p className="">กำลังโหลดข้อมูล...</p>
+            </div>
+          ) : (
+            <ExpenseCardItems data={data} />
+          )}
         </div>
       </div>
     </div>
