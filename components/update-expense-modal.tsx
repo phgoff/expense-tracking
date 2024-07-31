@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { updateExpenseAction } from "@/app/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import dayjs from "dayjs";
 import Spinner from "./spinner";
 import { toast } from "sonner";
 
@@ -131,8 +130,12 @@ export const UpdateExpenseModal = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="income">รายรับ</SelectItem>
-                  <SelectItem value="expense">รายจ่าย</SelectItem>
+                  <SelectItem id="type" value="income">
+                    รายรับ
+                  </SelectItem>
+                  <SelectItem id="type" value="expense">
+                    รายจ่าย
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>

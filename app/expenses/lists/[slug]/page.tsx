@@ -1,6 +1,5 @@
 import dayjs from "@/lib/dayjs";
 import { redirect } from "next/navigation";
-import { validateRequest } from "@/lib/auth";
 import { getList } from "@/lib/db/query";
 import { ExpenseCard } from "@/components/expense-card";
 
@@ -13,11 +12,6 @@ import { formatNumber } from "@/lib/utils";
 import { getExpensesByListAction } from "@/app/actions";
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const { user } = await validateRequest();
-  if (!user) {
-    return redirect("/login");
-  }
-
   const listId = params.slug;
   const list = await getList(listId);
 
