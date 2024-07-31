@@ -21,9 +21,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   const now = dayjs();
   const month = now.format("YYYY-MM");
-
   const queryClient = new QueryClient();
-
   await queryClient.prefetchQuery({
     queryKey: ["expenses", listId, month],
     queryFn: () => getExpensesByListAction(listId, month),
