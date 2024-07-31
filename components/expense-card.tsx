@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { formatNumber } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ExpenseCardItems } from "@/components/expense-card-items";

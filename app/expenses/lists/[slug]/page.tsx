@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from "@/lib/dayjs";
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/lib/auth";
 import { getList } from "@/lib/db/query";
@@ -25,7 +25,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
     return redirect("/expenses/lists");
   }
 
-  const month = dayjs().format("YYYY-MM");
+  const now = dayjs();
+  const month = now.format("YYYY-MM");
 
   const queryClient = new QueryClient();
 
@@ -36,16 +37,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   return (
     <>
-      <div className="mb-1 space-y-2 text-center">
+      <div className="space-y-2 text-center">
         <p className="text-sm font-light">
           คงเหลือ ณ วันที่{" "}
           <span className="font-normal text-blue-600">
-            {dayjs().format("DD/MM/YYYY")}
+            {now.format("DD/MM/YYYY")}
           </span>
         </p>
-        <h1 className="text-4xl font-bold">
-          {formatNumber(list.balance ?? 0)}
-        </h1>
+        <h1 className="text-4xl font-bold">{formatNumber(list.balance)}</h1>
       </div>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ExpenseCard list={list} />
