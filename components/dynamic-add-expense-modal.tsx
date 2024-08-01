@@ -16,6 +16,7 @@ import { addExpenesAction } from "@/app/actions";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Spinner from "./spinner";
+import dayjs from "@/lib/dayjs";
 
 const initialInputs = [{ id: Date.now(), item: "", amount: "" }];
 export const DynamicAddExpenseModal = ({
@@ -120,10 +121,7 @@ export const DynamicAddExpenseModal = ({
           <div className="grid gap-4 py-4">
             <div className="flex flex-col items-start gap-4 px-2">
               <Label htmlFor="date">วันที่</Label>
-              <Input
-                id="date"
-                defaultValue={new Date().toISOString().split("T")[0]}
-              />
+              <Input id="date" defaultValue={dayjs().format("YYYY-MM-DD")} />
             </div>
             <div
               className="max-h-[290px] space-y-4 overflow-y-auto pb-2"
