@@ -10,13 +10,19 @@ import {
 } from "@tanstack/react-query";
 import { formatNumber } from "@/lib/utils";
 import { getExpensesByListAction } from "@/app/actions";
+import { validateRequest } from "@/lib/auth";
 
 export default async function Page({ params }: { params: { slug: string } }) {
+  const { user } = await validateRequest();
+  if (!user) {
+    return redirect("/login");
+  }
+  
   const listId = params.slug;
   const list = await getList(listId);
 
-  if (!list) {
-    return redirect("/expenses/lists");
+  if (!list || list.userId !== user.id) {
+    return redirect("/expenses");
   }
 
   const now = dayjs();
