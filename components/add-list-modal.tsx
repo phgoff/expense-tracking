@@ -12,13 +12,26 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
 import { DialogHeader, DialogFooter } from "./ui/dialog";
-import { adddListAction } from "@/app/actions";
 import Spinner from "./spinner";
-
-export const AddListModal = ({ userId }: { userId: string }) => {
-  const [isPending, startTransition] = React.useTransition();
+import { api } from "@/trpc/react";
+import { toast } from "sonner";
+export const AddListModal = () => {
   const [open, setOpen] = React.useState(false);
-  const addListWithUserIdAction = adddListAction.bind(null, userId);
+
+  const utils = api.useUtils();
+  const mutation = api.list.add.useMutation({
+    onSuccess: async () => {
+      return await utils.list.getUserLists.invalidate();
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง");
+    },
+    onSettled: () => {
+      setOpen(false);
+    },
+  });
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -26,14 +39,10 @@ export const AddListModal = ({ userId }: { userId: string }) => {
       </DialogTrigger>
       <DialogContent className="w-11/12 rounded-lg sm:max-w-[425px]">
         <form
-          action={addListWithUserIdAction}
           onSubmit={async (e) => {
             e.preventDefault();
-            startTransition(async () => {
-              const formData = new FormData(e.target as HTMLFormElement);
-              await adddListAction(userId, formData);
-              setOpen(false);
-            });
+            const formData = new FormData(e.target as HTMLFormElement);
+            mutation.mutate({ name: formData.get("item") as string });
           }}
         >
           <DialogHeader>
@@ -53,8 +62,8 @@ export const AddListModal = ({ userId }: { userId: string }) => {
             />
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isPending}>
-              {isPending && <Spinner />}
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Spinner />}
               ยืนยัน
             </Button>
           </DialogFooter>

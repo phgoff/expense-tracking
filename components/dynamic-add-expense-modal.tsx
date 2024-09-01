@@ -12,11 +12,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
 import { DialogHeader, DialogFooter } from "./ui/dialog";
-import { addExpenesAction } from "@/app/actions";
 import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Spinner from "./spinner";
 import dayjs from "@/lib/dayjs";
+import { api } from "@/trpc/react";
 
 const initialInputs = [{ id: Date.now(), item: "", amount: "" }];
 export const DynamicAddExpenseModal = ({
@@ -26,7 +25,6 @@ export const DynamicAddExpenseModal = ({
   type: string;
   listId: string;
 }) => {
-  const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
   const [inputs, setInputs] = React.useState(initialInputs);
   const containerRef = React.useRef<null | HTMLDivElement>(null);
@@ -75,12 +73,12 @@ export const DynamicAddExpenseModal = ({
     setInputs(updatedInputs);
   };
 
-  const mutation = useMutation({
-    mutationFn: addExpenesAction,
+  const utils = api.useUtils();
+  const mutation = api.expense.create.useMutation({
     onSuccess: async () => {
-      return await queryClient.invalidateQueries({
-        queryKey: ["expenses", listId],
-      });
+      await utils.expense.get.invalidate({ listId });
+      await utils.list.get.invalidate({ listId });
+      await utils.list.getUserLists.invalidate();
     },
     onError: (error) => {
       console.error(error);
