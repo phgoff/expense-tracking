@@ -16,6 +16,10 @@ import { toast } from "sonner";
 import Spinner from "./spinner";
 import dayjs from "@/lib/dayjs";
 import { api } from "@/trpc/react";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar } from "./ui/calendar";
 
 const initialInputs = [{ id: Date.now(), item: "", amount: "" }];
 export const DynamicAddExpenseModal = ({
@@ -27,6 +31,7 @@ export const DynamicAddExpenseModal = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const [inputs, setInputs] = React.useState(initialInputs);
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
   const containerRef = React.useRef<null | HTMLDivElement>(null);
   const title = type === "income" ? "รายรับ" : "รายจ่าย";
 
@@ -40,6 +45,10 @@ export const DynamicAddExpenseModal = ({
     if (!open) {
       setInputs(initialInputs);
     }
+
+    return () => {
+      setDate(new Date());
+    };
   }, [open]);
 
   const onAddInput = () => {
@@ -86,6 +95,7 @@ export const DynamicAddExpenseModal = ({
     },
     onSettled: () => {
       setOpen(false);
+      setDate(new Date());
     },
   });
 
@@ -95,7 +105,7 @@ export const DynamicAddExpenseModal = ({
       const amount = Number.parseFloat(input.amount);
       return {
         listId,
-        date: event.currentTarget.date.value,
+        date: dayjs(date).format("YYYY-MM-DD"),
         name: input.item,
         amount: type === "income" ? amount : -amount,
       };
@@ -108,7 +118,10 @@ export const DynamicAddExpenseModal = ({
       <DialogTrigger asChild>
         <Button variant="outline">เพิ่ม{title}</Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[550px] w-11/12 rounded-lg sm:max-w-[425px]">
+      <DialogContent
+        className="max-h-[550px] w-11/12 rounded-lg sm:max-w-[425px]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <form onSubmit={onSummit}>
           <DialogHeader>
             <DialogTitle>บันทึก{title}</DialogTitle>
@@ -119,11 +132,32 @@ export const DynamicAddExpenseModal = ({
           <div className="grid gap-4 py-4">
             <div className="flex flex-col items-start gap-4 px-2">
               <Label htmlFor="date">วันที่</Label>
-              <Input
-                id="date"
-                type="date"
-                defaultValue={dayjs().format("YYYY-MM-DD")}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? (
+                      dayjs(date).format("DD MMMM YYYY")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div
               className="max-h-[290px] space-y-4 overflow-y-auto pb-2"

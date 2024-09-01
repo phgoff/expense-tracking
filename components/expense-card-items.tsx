@@ -24,7 +24,7 @@ export const ExpenseCardItems = ({
 
   return (
     <>
-      {data?.data.map((data) => (
+      {data.data.map((data) => (
         <div
           key={data.date}
           className="border-t py-4 first:border-t-0 first:pt-0"
@@ -68,7 +68,14 @@ export const ExpenseCardItems = ({
           </div>
         </div>
       ))}
-      <UpdateExpenseModal open={open} setOpen={setOpen} data={selectedData} />
+      {selectedData && (
+        <UpdateExpenseModal
+          key={selectedData.id}
+          open={open}
+          setOpen={setOpen}
+          data={selectedData}
+        />
+      )}
     </>
   );
 };
