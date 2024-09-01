@@ -155,7 +155,7 @@ export const UpdateExpenseModal = ({
           <div className="grid gap-4 py-4">
             <div className="flex flex-col items-start gap-4">
               <Label htmlFor="date">วันที่</Label>
-              <Input id="date" defaultValue={data?.date} />
+              <Input id="date" type="date" defaultValue={data?.date} />
             </div>
             <div className="flex flex-col items-start gap-4">
               <Label htmlFor="type">ประเภท</Label>

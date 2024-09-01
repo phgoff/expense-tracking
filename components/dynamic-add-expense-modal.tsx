@@ -119,7 +119,11 @@ export const DynamicAddExpenseModal = ({
           <div className="grid gap-4 py-4">
             <div className="flex flex-col items-start gap-4 px-2">
               <Label htmlFor="date">วันที่</Label>
-              <Input id="date" defaultValue={dayjs().format("YYYY-MM-DD")} />
+              <Input
+                id="date"
+                type="date"
+                defaultValue={dayjs().format("YYYY-MM-DD")}
+              />
             </div>
             <div
               className="max-h-[290px] space-y-4 overflow-y-auto pb-2"
