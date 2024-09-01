@@ -21,6 +21,11 @@ import {
 import Spinner from "./spinner";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";
+import dayjs from "@/lib/dayjs";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar } from "./ui/calendar";
 
 export interface UpdateExpenseDataType {
   listId: string;
@@ -48,10 +53,11 @@ export const UpdateExpenseModal = ({
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  data: UpdateExpenseDataType | null;
+  data: UpdateExpenseDataType;
 }) => {
-  const defaultType = data?.amount && data.amount > 0 ? "income" : "expense";
+  const defaultType = data.amount > 0 ? "income" : "expense";
   const [selectedType, setSelectedType] = React.useState(defaultType);
+  const [date, setDate] = React.useState<Date | undefined>(new Date(data.date));
 
   const utils = api.useUtils();
   const updateMutation = api.expense.update.useMutation({
@@ -95,7 +101,6 @@ export const UpdateExpenseModal = ({
 
     const form = event.currentTarget;
     const name = form.item.value;
-    const date = form.date.value;
     const amount = Number.parseFloat(form.amount.value);
 
     const { newAmount, diffAmount } = calculateAmounts(
@@ -107,7 +112,7 @@ export const UpdateExpenseModal = ({
     const newdata = {
       ...data,
       name,
-      date,
+      date: dayjs(date).format("YYYY-MM-DD"),
       amount: newAmount,
     };
 
@@ -141,12 +146,16 @@ export const UpdateExpenseModal = ({
   React.useEffect(() => {
     if (open) {
       setSelectedType(defaultType);
+      setDate(new Date(data.date));
     }
-  }, [open, defaultType]);
+  }, [open, defaultType, data.date]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-11/12 rounded-lg sm:max-w-[425px]">
+      <DialogContent
+        className="w-11/12 rounded-lg sm:max-w-[425px]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <form onSubmit={submitHandler}>
           <DialogHeader>
             <DialogTitle>แก้ไขรายการ</DialogTitle>
@@ -155,7 +164,32 @@ export const UpdateExpenseModal = ({
           <div className="grid gap-4 py-4">
             <div className="flex flex-col items-start gap-4">
               <Label htmlFor="date">วันที่</Label>
-              <Input id="date" type="date" defaultValue={data?.date} />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? (
+                      dayjs(date).format("DD MMMM YYYY")
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="flex flex-col items-start gap-4">
               <Label htmlFor="type">ประเภท</Label>
