@@ -132,7 +132,7 @@ export const DynamicAddExpenseModal = ({
           <div className="grid gap-4 py-4">
             <div className="flex flex-col items-start gap-4 px-2">
               <Label htmlFor="date">วันที่</Label>
-              <Popover>
+              <Popover modal={true}>
                 <PopoverTrigger asChild>
                   <Button
                     variant={"outline"}
