@@ -18,4 +18,6 @@ export const adatper = new DrizzleSQLiteAdapter(
   schema.users,
 );
 
+export type Db = typeof db;
+
 export default db;

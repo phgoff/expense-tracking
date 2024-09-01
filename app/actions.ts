@@ -5,55 +5,9 @@ import { lucia } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Scrypt, generateIdFromEntropySize } from "lucia";
-import { revalidatePath } from "next/cache";
-import {
-  addExpenses,
-  addList,
-  getExpenses,
-  updateExpense,
-} from "@/lib/db/query";
-import { users, type ExpenseInsert } from "@/lib/db/schema";
+
+import { users } from "@/lib/db/schema";
 import type { ActionResult } from "@/components/form-action";
-
-const expensesPath = "/expenses/lists";
-
-export const adddListAction = async (userId: string, formData: FormData) => {
-  const name = formData.get("item") as string;
-  await addList(name, userId);
-
-  revalidatePath("/expenses");
-
-  return true;
-};
-
-export const addExpenesAction = async (data: ExpenseInsert[]) => {
-  await addExpenses(data);
-
-  revalidatePath(`${expensesPath}/${data[0].listId}`);
-
-  return true;
-};
-
-export const updateExpenseAction = async ({
-  id,
-  data,
-  diffAmount,
-}: {
-  id: number;
-  data: Partial<ExpenseInsert>;
-  diffAmount: number;
-}) => {
-  await updateExpense(id, data, diffAmount);
-  revalidatePath(`${expensesPath}/${data.listId}`);
-
-  return true;
-};
-export const getExpensesByListAction = async (
-  listId: string,
-  month: string,
-) => {
-  return getExpenses(listId, month);
-};
 
 export const signup = async (
   _: ActionResult,

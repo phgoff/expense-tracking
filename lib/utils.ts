@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatNumber(num: number) {
+export function formatNumber(num = 0) {
   // Format number to have comma every 3 digits and 2 decimal points but remove decimal points if it's 0
   return num
     .toFixed(2)
