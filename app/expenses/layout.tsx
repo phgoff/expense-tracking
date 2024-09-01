@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { logout } from "@/app/actions";
 import { validateRequest } from "@/lib/auth";
-import { getUserLists } from "@/lib/db/query";
 import { FormAction } from "@/components/form-action";
 import { SubmitButton } from "@/components/submit-button";
 import Link from "next/link";

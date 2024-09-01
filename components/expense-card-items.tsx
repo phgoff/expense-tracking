@@ -19,7 +19,7 @@ export const ExpenseCardItems = ({
   const listId = data?.list.id;
 
   if (data?.data.length === 0 || !listId) {
-    return <p className="mt-4 text-center text-gray-400">ไม่มีข้อมูล</p>;
+    return <p className="mt-14 text-center text-gray-400">ไม่มีข้อมูล</p>;
   }
 
   return (
